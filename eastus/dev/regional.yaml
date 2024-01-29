@@ -1,0 +1,4 @@
+location:
+  alias: eus
+  name: "East US"
+  code: "eastus"

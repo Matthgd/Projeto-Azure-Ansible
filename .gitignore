@@ -32,3 +32,17 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+.terragrunt-cache/*
+*.terragrunt-cache/
+*.terragrunt-cache
+*.lock*
+*.g.tf
+*.tfstate*
+# OS X files
+.history
+.DS_Store
+run.sh
+.terraform*
+*.terraform
+vm-scripts
+terragrunt-cache*

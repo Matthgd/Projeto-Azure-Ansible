@@ -1,0 +1,113 @@
+parameters:
+  - name: tfpath
+    type: string
+    default: ''
+    values:
+      - eastus/dev/keyvault
+      - eastus/dev/rg
+      - eastus/dev/vm
+  - name: command
+    type: string
+    default: ''
+    values:
+      - plan
+      - apply
+stages:
+- ${{ if contains(parameters['command'], 'apply') }}:
+  - stage: Creating
+    displayName: Creating Infrastructure
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs:
+    - deployment: Build
+      displayName: Creating Infrastructure 
+      environment: 'apply'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - checkout: self
+              persistCredentials: true
+            #- task: AzureKeyVault@2
+            #  inputs:
+            #    azureSubscription: ''
+            #    KeyVaultName: ''
+            #    SecretsFilter: '*'
+            #    RunAsPreJob: true
+            
+            - task: Bash@3
+              displayName: Installing Terraform and Terragrunt
+              inputs:
+                targetType: inline
+                script: |
+                  wget https://releases.hashicorp.com/terraform/1.5.4/terraform_1.5.4_linux_amd64.zip
+                  unzip terraform*.zip
+                  sudo mv terraform /usr/local/bin
+                  wget https://github.com/gruntwork-io/terragrunt/releases/download/v0.37.1/terragrunt_linux_amd64
+                  mv ./terragrunt_linux_amd64 ./terragrunt
+                  chmod +x ./terragrunt
+                  sudo mv terragrunt /usr/local/bin
+                  terraform --version
+
+            - task: AzureCLI@2
+              displayName:  Creating TF
+              inputs:
+                azureSubscription: ''
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: |-
+                  cd $(TF_PATH)
+
+                  #Execução do terragrunt
+                  echo "Y" | terragrunt apply-all
+              env:
+                TF_PATH: ${{parameters.tfpath}}
+- ${{ if contains(parameters['command'], 'plan') }}:
+  - stage: Planning
+    displayName: Planning Infrastructure
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs:
+    - deployment: Build
+      displayName: Planning Infrastructure 
+      environment: 'plan'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - checkout: self
+              persistCredentials: true
+            #- task: AzureKeyVault@2
+            #  inputs:
+            #    azureSubscription: ''
+            #    KeyVaultName: ''
+            #    SecretsFilter: '*'
+            #    RunAsPreJob: true
+            
+            - task: Bash@3
+              displayName: Installing Terraform and Terragrunt
+              inputs:
+                targetType: inline
+                script: |
+                  wget https://releases.hashicorp.com/terraform/1.5.4/terraform_1.5.4_linux_amd64.zip
+                  unzip terraform*.zip
+                  sudo mv terraform /usr/local/bin
+                  wget https://github.com/gruntwork-io/terragrunt/releases/download/v0.37.1/terragrunt_linux_amd64
+                  mv ./terragrunt_linux_amd64 ./terragrunt
+                  chmod +x ./terragrunt
+                  sudo mv terragrunt /usr/local/bin
+                  terraform --version
+
+            - task: AzureCLI@2
+              displayName:  Planning TF
+              inputs:
+                azureSubscription: ''
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: |-
+                  cd $(TF_PATH)
+
+                  #Execução do terragrunt
+                  terragrunt run-all plan
+              env:
+                TF_PATH: ${{parameters.tfpath}}

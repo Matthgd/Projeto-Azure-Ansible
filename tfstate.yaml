@@ -1,4 +1,4 @@
 azurerm:
-  storage_account_name:  ""
-  resource_group_name: ""
-  container_name: ""
+  storage_account_name:  "storagetfstatedsakg"
+  resource_group_name: "test"
+  container_name: "tfstate"

@@ -1,0 +1,16 @@
+- hosts: all
+
+  tasks:
+  - name: Copying script files
+    win_copy:
+      src: scripts/
+      dest: 'C:\projeto\'
+      remote_src: no
+
+  - name: Setting Timezone
+    win_command: |
+      powershell.exe -ExecutionPolicy ByPass -File C:\projeto\timezone.ps1
+
+  - name: Installing Dotnet 4.6
+    win_command: |
+      powershell.exe -ExecutionPolicy ByPass -File C:\ambevtech\dotnet.ps1

@@ -20,15 +20,21 @@ dependency "rg" {
 
 terraform {
   source = "https://github.com/Matthgd/terraform-module-secondlayer-vm-windows.git"
+
+  after_hook "config-vm" {
+    commands     = ["apply"]
+    execute      = ["bash", "ansible/ansible.sh", "${get_env("VM-ADMIN-USERNAME")}", "${get_env("VM-ADMIN-PASSWORD")}"]
+  }
 }
+
 
 inputs = {
  name = "ANSIBLE-ASADA31"
  location = local.regional_vars.location
  tags = local.tags
  resource_group_name = dependency.rg.outputs.resource_group_name
- admin_username = ""
- admin_password = ""
+ admin_username = get_env("VM-ADMIN-USERNAME")
+ admin_password = get_env("VM-ADMIN-PASSWORD")
  size = local.vm.size
  source_image_reference = local.source_image_reference
  ip_configurations = local.ip_configurations

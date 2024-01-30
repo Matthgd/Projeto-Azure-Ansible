@@ -11,7 +11,6 @@ echo "[all:vars]" >> ${INVENTORY_FILE_NAME}
 echo "ansible_user=$1" >> ${INVENTORY_FILE_NAME}
 echo "ansible_password=$2" >> ${INVENTORY_FILE_NAME}
 echo "ansible_pat=$3" >> ${INVENTORY_FILE_NAME}
-echo "ansible_datadog_apikey=$4" >> ${INVENTORY_FILE_NAME}
 echo "ansible_connection=winrm" >> ${INVENTORY_FILE_NAME}
 echo "ansible_winrm_transport=ntlm" >> ${INVENTORY_FILE_NAME}
 echo "ansible_winrm_server_cert_validation=ignore" >> ${INVENTORY_FILE_NAME}
